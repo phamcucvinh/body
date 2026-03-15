@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강남세브란스병원 지하철 찾아가는 길</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f7fa;
+    --white: #ffffff;
+    --text: #1a1a2e;
+    --text-dim: #6b7280;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --orange: #d97706;
+    --orange-light: #fffbeb;
+    --red: #dc2626;
+    --line3: #ef6c00;
+    --line-bundang: #f5c500;
+    --line-srt: #9c27b0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    color: white;
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+  .header .subtitle { font-size: 14px; opacity: 0.85; }
+  .header .address {
+    margin-top: 12px;
+    background: rgba(255,255,255,0.15);
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+  }
+
+  /* Container */
+  .container { max-width: 800px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* Info Banner */
+  .info-banner {
+    background: var(--blue-light);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .info-banner .icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .info-banner p { font-size: 14px; color: #1e40af; }
+  .info-banner strong { color: #1e3a8a; }
+
+  /* Section */
+  .section {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .section-header {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .section-header:hover { background: #f9fafb; }
+
+  .line-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .line-3 { background: var(--line3); }
+  .line-bundang { background: var(--line-bundang); color: #333; }
+  .line-srt { background: var(--line-srt); }
+
+  .section-title {
+    flex: 1;
+  }
+
+  .section-title h2 { font-size: 17px; font-weight: 600; }
+  .section-title .meta { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+  .recommend-tag {
+    background: #dcfce7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  .toggle-icon {
+    font-size: 18px;
+    color: var(--text-dim);
+    transition: transform 0.25s;
+  }
+
+  .section.open .toggle-icon { transform: rotate(180deg); }
+
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .section.open .section-body { max-height: 1200px; }
+
+  .section-content {
+    padding: 0 20px 20px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* Steps */
+  .steps { padding-top: 16px; }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .step:last-child { padding-bottom: 0; }
+
+  .step-line {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .step-dot.exit { background: var(--blue); }
+  .step-dot.walk { background: var(--green); }
+  .step-dot.shuttle { background: var(--orange); }
+  .step-dot.arrive { background: var(--red); }
+
+  .step-connector {
+    width: 2px;
+    flex: 1;
+    background: #e5e7eb;
+    margin-top: 4px;
+  }
+
+  .step:last-child .step-connector { display: none; }
+
+  .step-content { flex: 1; padding-top: 3px; }
+  .step-content h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .step-content p { font-size: 13px; color: var(--text-dim); }
+
+  .step-content .tip {
+    margin-top: 8px;
+    background: #fef3c7;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #92400e;
+  }
+
+  /* Shuttle Table */
+  .shuttle-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+
+  .shuttle-table th {
+    background: #f8fafc;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .shuttle-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .shuttle-table tr:last-child td { border-bottom: none; }
+
+  .day-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .day-weekday { background: #dbeafe; color: #1d4ed8; }
+  .day-saturday { background: #e0e7ff; color: #4338ca; }
+  .day-holiday { background: #fee2e2; color: #b91c1c; }
+
+  /* Transfer info */
+  .transfer-box {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    border-left: 3px solid var(--blue);
+  }
+
+  .transfer-box h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--blue);
+  }
+
+  .transfer-box p { font-size: 13px; color: var(--text-dim); }
+
+  /* Map embed */
+  .map-container {
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+  }
+
+  .map-container iframe {
+    width: 100%;
+    height: 300px;
+    border: none;
+  }
+
+  /* Summary cards */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .summary-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 2px solid transparent;
+  }
+
+  .summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .summary-card.active { border-color: var(--blue); }
+
+  .summary-card .sc-icon { font-size: 28px; margin-bottom: 6px; }
+  .summary-card .sc-station { font-size: 15px; font-weight: 700; }
+  .summary-card .sc-line { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+  .summary-card .sc-time { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 6px; }
+
+  /* Contact bar */
+  .contact-bar {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .contact-bar a {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .contact-bar .phone { font-size: 14px; color: var(--text-dim); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .footer a { color: var(--blue); text-decoration: none; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .header h1 { font-size: 22px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>강남세브란스병원</h1>
+  <div class="subtitle">지하철로 찾아가는 길 안내</div>
+  <div class="address">서울특별시 강남구 언주로 211 (도곡동)</div>
+</div>
+
+<div class="container">
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card" onclick="openSection('dogok')">
+      <div class="sc-icon">🟠</div>
+      <div class="sc-station">도곡역</div>
+      <div class="sc-line">3호선 · 2번 출구</div>
+      <div class="sc-time">셔틀 5분</div>
+    </div>
+    <div class="summary-card" onclick="openSection('maebong')">
+      <div class="sc-icon">🟠</div>
+      <div class="sc-station">매봉역</div>
+      <div class="sc-line">3호선 · 2번 출구</div>
+      <div class="sc-time">셔틀 5분</div>
+    </div>
+    <div class="summary-card" onclick="openSection('hanti')">
+      <div class="sc-icon">🟡</div>
+      <div class="sc-station">한티역</div>
+      <div class="sc-line">분당선 · 7번 출구</div>
+      <div class="sc-time">셔틀 5분</div>
+    </div>
+    <div class="summary-card" onclick="openSection('suseo')">
+      <div class="sc-icon">🟣</div>
+      <div class="sc-station">수서역</div>
+      <div class="sc-line">SRT · 3번 출구</div>
+      <div class="sc-time">셔틀 10분</div>
+    </div>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <div class="icon">ℹ️</div>
+    <p><strong>셔틀버스 참고사항:</strong> 일요일 및 공휴일에는 모든 셔틀버스가 운행하지 않습니다. 정확한 시간표는 병원 공식 홈페이지에서 확인해 주세요.</p>
+  </div>
+
+  <!-- Route 1: 도곡역 -->
+  <div class="section open" id="dogok">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="line-badge line-3">3</div>
+      <div class="section-title">
+        <h2>도곡역 (3호선)</h2>
+        <div class="meta">2번 출구 → 셔틀버스 → 병원 (약 5분)</div>
+      </div>
+      <span class="recommend-tag">추천</span>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="section-content">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot exit">1</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>도곡역 2번 출구로 나오세요</h3>
+              <p>3호선 도곡역에서 하차 후 2번 출구로 나옵니다.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot walk">2</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>뒤돌아서 육교 아래 버스정류장</h3>
+              <p>2번 출구로 나온 뒤 뒤돌아서면 육교 아래에 셔틀버스 정류장이 있습니다.</p>
+              <div class="tip">💡 출구 나와서 바로 뒤를 돌아보세요. 육교 아래에 '강남세브란스' 표지판이 보입니다.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot shuttle">3</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>셔틀버스 탑승</h3>
+              <p>매시 05분, 25분, 45분에 셔틀버스가 출발합니다. (20분 간격)</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot arrive">4</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>강남세브란스병원 도착</h3>
+              <p>약 5분 소요. 병원 정문 앞에서 하차합니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <table class="shuttle-table">
+          <thead>
+            <tr><th>구분</th><th>역 → 병원</th><th>병원 → 역</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="day-badge day-weekday">평일</span></td>
+              <td>07:05 ~ 17:25</td>
+              <td>07:20 ~ 17:00</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-saturday">토요일</span></td>
+              <td>08:05 ~ 12:05</td>
+              <td>08:20 ~ 12:20</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-holiday">일요일/공휴일</span></td>
+              <td colspan="2" style="text-align:center; color:var(--red);">운행하지 않음</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="transfer-box">
+          <h4>주요 환승 경로</h4>
+          <p>• 서울역 → 1호선 종로3가역 → 3호선 환승 → 도곡역<br>
+             • 영등포역 → 1호선 종로3가역 → 3호선 환승 → 도곡역<br>
+             • 남부터미널역 → 3호선 도곡역 (환승 없이 직행)
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route 2: 매봉역 -->
+  <div class="section" id="maebong">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="line-badge line-3">3</div>
+      <div class="section-title">
+        <h2>매봉역 (3호선)</h2>
+        <div class="meta">2번 출구 → 셔틀버스 → 병원 (약 5분)</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="section-content">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot exit">1</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>매봉역 2번 출구로 나오세요</h3>
+              <p>3호선 매봉역에서 하차 후 2번 출구로 나옵니다.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot shuttle">2</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>셔틀버스 탑승</h3>
+              <p>2번 출구 앞 셔틀버스 정류장에서 승차합니다. 매시 15분, 35분, 55분에 출발합니다. (20분 간격)</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot arrive">3</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>강남세브란스병원 도착</h3>
+              <p>약 5분 소요.</p>
+            </div>
+          </div>
+        </div>
+
+        <table class="shuttle-table">
+          <thead>
+            <tr><th>구분</th><th>역 → 병원</th><th>병원 → 역</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="day-badge day-weekday">평일</span></td>
+              <td>07:15 ~ 17:35</td>
+              <td>07:20 ~ 17:00</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-saturday">토요일</span></td>
+              <td>08:15 ~ 12:15</td>
+              <td>08:20 ~ 12:20</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-holiday">일요일/공휴일</span></td>
+              <td colspan="2" style="text-align:center; color:var(--red);">운행하지 않음</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route 3: 한티역 -->
+  <div class="section" id="hanti">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="line-badge line-bundang">B</div>
+      <div class="section-title">
+        <h2>한티역 (분당선)</h2>
+        <div class="meta">7번 출구 → 셔틀버스 → 병원 (약 5분)</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="section-content">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot exit">1</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>한티역 7번 출구로 나오세요</h3>
+              <p>분당선 한티역에서 하차 후 7번 출구로 나옵니다.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot shuttle">2</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>셔틀버스 탑승</h3>
+              <p>7번 출구에서 약 10m 앞 버스 승강장에서 승차합니다. 매시 10분, 30분, 50분에 출발합니다. (20분 간격)</p>
+              <div class="tip">💡 분당, 수원, 죽전 방면에서 오시는 분들에게 편리합니다.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot arrive">3</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>강남세브란스병원 도착</h3>
+              <p>약 5분 소요.</p>
+            </div>
+          </div>
+        </div>
+
+        <table class="shuttle-table">
+          <thead>
+            <tr><th>구분</th><th>역 → 병원</th><th>병원 → 역</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="day-badge day-weekday">평일</span></td>
+              <td>07:10 ~ 17:30</td>
+              <td>07:35 ~ 17:15</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-saturday">토요일</span></td>
+              <td>08:10 ~ 12:10</td>
+              <td>08:35 ~ 12:35</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-holiday">일요일/공휴일</span></td>
+              <td colspan="2" style="text-align:center; color:var(--red);">운행하지 않음</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route 4: 수서역 -->
+  <div class="section" id="suseo">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="line-badge line-srt">S</div>
+      <div class="section-title">
+        <h2>수서역 (SRT)</h2>
+        <div class="meta">3번 출구 → 셔틀버스 → 병원 (약 10분)</div>
+      </div>
+      <span class="toggle-icon">▾</span>
+    </div>
+    <div class="section-body">
+      <div class="section-content">
+        <div class="steps">
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot exit">1</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>SRT 수서역 3번 출구로 나오세요</h3>
+              <p>SRT 수서역사에서 하차 후 3번 출구로 나옵니다.</p>
+              <div class="tip">💡 지방에서 SRT로 오시는 분들에게 편리합니다. (대전, 동대구, 부산 등)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot shuttle">2</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>셔틀버스 탑승</h3>
+              <p>3번 출구 옆 셔틀버스 승하차장에서 승차합니다.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-line">
+              <div class="step-dot arrive">3</div>
+              <div class="step-connector"></div>
+            </div>
+            <div class="step-content">
+              <h3>강남세브란스병원 도착</h3>
+              <p>약 10분 소요.</p>
+            </div>
+          </div>
+        </div>
+
+        <table class="shuttle-table">
+          <thead>
+            <tr><th>구분</th><th>수서역 → 병원</th><th>병원 → 수서역</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="day-badge day-weekday">평일</span></td>
+              <td>07:30 ~ 17:00</td>
+              <td>08:00 ~ 17:30</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-saturday">토요일</span></td>
+              <td>08:00 ~ 12:00</td>
+              <td>08:30 ~ 12:30</td>
+            </tr>
+            <tr>
+              <td><span class="day-badge day-holiday">일요일/공휴일</span></td>
+              <td colspan="2" style="text-align:center; color:var(--red);">운행하지 않음</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="contact-bar">
+    <div>
+      <span class="phone">대표전화: <strong>02-2019-3114</strong></span>
+    </div>
+    <a href="https://gs.severance.healthcare/gs/about/location/map.do" target="_blank">공식 홈페이지 →</a>
+  </div>
+
+  <div class="footer">
+    <p>본 페이지는 참고용이며, 정확한 셔틀버스 시간표는<br>
+    <a href="https://gs.severance.healthcare/gs/about/location/map.do" target="_blank">강남세브란스병원 공식 홈페이지</a>에서 확인해 주세요.</p>
+  </div>
+
+</div>
+
+<script>
+function toggleSection(header) {
+  const section = header.parentElement;
+  section.classList.toggle('open');
+}
+
+function openSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.summary-card').forEach(c => c.classList.remove('active'));
+
+  const target = document.getElementById(id);
+  target.classList.add('open');
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  event.currentTarget.classList.add('active');
+}
+</script>
+
+</body>
+</html>
